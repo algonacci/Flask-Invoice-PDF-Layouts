@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Transaksi</title>
+</head>
+
+<body>
+    <h1>Daftar Transaksi</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Tanggal</th>
+                <th>Nama Barang</th>
+                <th>Jumlah</th>
+                <th>Total Harga</th>
+                <th>Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>2023-12-18</td>
+                <td>Pena</td>
+                <td>5</td>
+                <td>$10.00</td>
+                <td><button onclick="generateInvoice(1)">Lihat Invoice</button></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2023-12-19</td>
+                <td>Buku</td>
+                <td>3</td>
+                <td>$15.00</td>
+                <td><button onclick="generateInvoice(2)">Lihat Invoice</button></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>2023-12-20</td>
+                <td>Kertas</td>
+                <td>10</td>
+                <td>$5.00</td>
+                <td><button onclick="generateInvoice(3)">Lihat Invoice</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function generateInvoice(rowNumber) {
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tr');
+
+            // Extract data from the selected row
+            const selectedRow = rows[rowNumber];
+            const rowData = [];
+            selectedRow.querySelectorAll('td').forEach((cell) => {
+                rowData.push(cell.textContent);
+            });
+
+            // Create a JSON object with the row data
+            const jsonData = {
+                no: rowData[0],
+                tanggal: rowData[1],
+                nama_barang: rowData[2],
+                jumlah: rowData[3],
+                total_harga: rowData[4],
+            };
+
+            // Send the JSON data to the server using AJAX
+            fetch('http://127.0.0.1:8080/generate_invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData),
+            })
+                .then((response) => response.blob())
+                .then((blob) => {
+                    // Create a URL for the PDF blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Open the PDF in a new tab
+                    window.open(url, '_blank');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
