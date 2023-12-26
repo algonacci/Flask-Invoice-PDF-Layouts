@@ -14,46 +14,35 @@
             <tr>
                 <th>No.</th>
                 <th>Tanggal</th>
-                <th>Nama Barang</th>
+                <th>Nama Pembeli</th>
                 <th>Jumlah</th>
                 <th>Total Harga</th>
                 <th>Invoice</th>
             </tr>
         </thead>
         <tbody>
+            {% for sale in sales %}
             <tr>
-                <td>1</td>
-                <td>2023-12-18</td>
-                <td>Pena</td>
-                <td>5</td>
-                <td>$10.00</td>
-                <td><button onclick="generateInvoice(1)">Lihat Invoice</button></td>
+                <td>{{ sale.id }}</td>
+                <td>{{ sale.created_date }}</td>
+                <td>{{ sale.buyer.name }}</td>
+                <td>{{ sale.total_weight }}</td>
+                <td>{{ sale.total_price }}</td>
+                <td>
+                    <button onclick="generateInvoice(this)" data-row="{{ loop.index }}">Lihat Invoice</button>
+                </td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>2023-12-19</td>
-                <td>Buku</td>
-                <td>3</td>
-                <td>$15.00</td>
-                <td><button onclick="generateInvoice(2)">Lihat Invoice</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>2023-12-20</td>
-                <td>Kertas</td>
-                <td>10</td>
-                <td>$5.00</td>
-                <td><button onclick="generateInvoice(3)">Lihat Invoice</button></td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 
     <script>
-        function generateInvoice(rowNumber) {
+        function generateInvoice(button) {
+            const rowNumber = button.getAttribute('data-row');
             const table = document.querySelector('table');
             const rows = table.querySelectorAll('tr');
 
-            // Extract data from the selected row
+            // Extract data from the selected row based on the rowNumber
             const selectedRow = rows[rowNumber];
             const rowData = [];
             selectedRow.querySelectorAll('td').forEach((cell) => {
@@ -64,13 +53,27 @@
             const jsonData = {
                 no: rowData[0],
                 tanggal: rowData[1],
-                nama_barang: rowData[2],
+                nama_pembeli: rowData[2],
                 jumlah: rowData[3],
                 total_harga: rowData[4],
             };
 
+            const sale_data = {
+                "no": jsonData.no,
+                "tanggal": new Date(jsonData.tanggal).toLocaleString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                }),
+                "nama_pembeli": jsonData.nama_pembeli,
+                "jumlah": jsonData.jumlah,
+                "total_harga": jsonData.total_harga,
+            };
+
+
             // Send the JSON data to the server using AJAX
-            fetch('http://127.0.0.1:8080/generate_invoice', {
+            fetch('http://0.0.0.0:8080/generate_invoice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

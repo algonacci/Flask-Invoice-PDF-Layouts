@@ -21,8 +21,8 @@
             </div>
             <div class="col-6 text-end">
                 <p>
-                    Invoice No: 123<br>
-                    Date: 25th October 2023<br>
+                    Invoice No: {{ sale.id }}<br>
+                    Date: {{ sale.created_date }}<br>
                 </p>
             </div>
         </div>
@@ -36,23 +36,19 @@
                             <th>Item Description</th>
                             <th>Qty</th>
                             <th>Unit Price</th>
-                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>CORAK NEW 36 DIOR</td>
-                            <td>674.41 Kg</td>
-                            <td>Price</td>
-                            <td>38,441,370</td>
-                        </tr>
-                        <!-- Add more items here -->
-                        <tr class="fw-bold">
-                            <td colspan="3" class="text-end">Total Invoice</td>
-                            <td>38,441,370</td>
+                            <td>{{ sale.buyer }}</td>
+                            <td>{{ sale.total_items }} Kg</td>
+                            <td>{{ sale.total_price }}</td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="text-end">
+                    <strong>Total Price: {{ sale.total_price }}</strong>
+                </div>
             </div>
         </div>
 
